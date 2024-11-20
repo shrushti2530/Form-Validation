@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation Using DOM</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(154, 154, 237);
+            padding: 10px 50px;
+            margin: 0;
+        }
+
+        form {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+            margin-top: 4%;
+        }
+
+        .form-Design {
+            font-size: 17px;
+            margin-bottom: 20px;
+        }
+
+        .form-Design input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-Design input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .form-error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .button {
+            border-radius: 16px;
+            width: 100%;
+            height: 50px;
+            font-size: 18px;
+            margin-top: 22px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/myaction.php" name="myForm" onsubmit="return validateForm()" method="post">
+        <center>
+            <h1>Placement Information Form</h1>
+            <h6>Using Dom Validation</h6>
+        </center>
+
+        <div class="form-Design" id="Profilephoto">
+            <label for="Profilephoto"> Profile Photo:</label>
+            <input type="file" id="Profilephoto" name="Profilephoto" accept="image/*">
+        </div>
+
+        <div class="form-Design" id="name">
+            Name: <input type="text" name="fname"><span class="form-error"></span>
+        </div>
+
+        <div class="form-Design" id="date">
+            Date Of Birth: <input type="date" name="dob" required><span class="form-error"></span>
+        </div>
+
+        <div class="form-Design" id="email">
+            Email: <input type="email" name="femail"><span class="form-error"></span>
+        </div>
+
+        <div class="form-Design" id="phone">
+            Phone: <input type="tel" name="fphone"><span class="form-error"></span>
+        </div>
+
+       
+
+        <div class="form-Design" id="passout">
+            Passout Year: <input type="text" id="passoutYear" name="fpoy"><span class="form-error"></span>
+        </div>
+
+        <div class="form-Design" id="password">
+            Password: <input type="password" name="fpass"><span class="form-error"></span>
+        </div>
+
+        <div class="form-Design" id="confirmpassword">
+            Confirm Password: <input type="password" name="fcpass"><span class="form-error"></span>
+        </div>
+
+        <input class="button" type="submit" value="Submit">
+    </form>
+
+    <script>
+        function setError(id, error) {
+            let element = document.getElementById(id);
+            element.getElementsByClassName('form-error')[0].innerHTML = error;
+        }
+
+        function clearErrors() {
+            let errors = document.getElementsByClassName('form-error');
+            for (let item of errors) {
+                item.innerHTML = "";
+            }
+        }
+
+        function validateForm() {
+            let returnVal = true;
+            clearErrors();
+
+            // validation 4 name
+            let name = document.forms['myForm']["fname"].value;
+            if (name.length < 5) {
+                setError("name", "Length of name is too short");
+                returnVal = false;
+            }
+
+            // Validation 4 email
+            let email = document.forms['myForm']["femail"].value;
+            if (email.length === 0) {
+                setError("email", "Email is required");
+                returnVal = false;
+            }
+
+            // validation 4 phoneno
+            let phone = document.forms['myForm']["fphone"].value;
+            if (phone.length !== 10) {
+                setError("phone", "Phone number must be 10 digits");
+                returnVal = false;
+            }
+
+            // validation 4 password
+            let password = document.forms['myForm']["fpass"].value;
+            if (password.length < 6) {
+                setError("password", "Password must be at least 6 characters long");
+                returnVal = false;
+            }
+
+            //  Validation 4 pwd
+            let confirmPassword = document.forms['myForm']["fcpass"].value;
+            if (confirmPassword !== password) {
+                setError("confirmpassword", "Passwords do not match");
+                returnVal = false;
+            }
+
+            // Validation 4 passout year
+            let y = document.getElementById("passoutYear").value;
+            if (isNaN(y) || y < 2020 || y > 2024) {
+                setError("passout", "Input must be a valid number");
+                returnVal = false;
+            }
+
+            let photoInput = document.forms["myForm"]["Profilephoto"];
+            let file = photoInput.files[0];
+
+            if (!file) {
+                setError("photoupload", "please upload your photo");
+                returnVal = false;
+            }
+            else {
+                const maxSize = 2 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    setError("photoUpload", "File size must be less than 2 MB")
+                }
+
+                const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+                if (!validImageTypes.includes(file.type)) {
+                    setError("photoUpload", "Only JPEG, PNG, and GIF files are allowed.");
+                    returnVal = false;
+                }
+            }
+
+            return returnVal;
+        }
+    </script>
+</body>
+
+</html>
